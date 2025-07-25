@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prijsvergelijker Supermarkten</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 700px; margin: 20px auto; }
+    input[type="text"] { width: 100%; padding: 8px; margin-bottom: 15px; font-size: 1rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background: #f4f4f4; }
+    tr:hover { background-color: #f9f9f9; }
+    .goedkoopste { font-weight: bold; color: green; }
+  </style>
+</head>
+<body>
+
+<h1>Prijsvergelijker Supermarkten</h1>
+
+<input type="text" id="search" placeholder="Zoek product..." />
+
+<table>
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Goedkoopste supermarkt</th>
+      <th>Prijs (€)</th>
+    </tr>
+  </thead>
+  <tbody id="productTableBody">
+    <!-- Productrijen komen hier -->
+  </tbody>
+</table>
+
+<script>
+const productCategorieen = [
+  { naam: "Kiwi", prijzen: [{supermarkt:"AH",prijs:1.50},{supermarkt:"Jumbo",prijs:1.30},{supermarkt:"Lidl",prijs:1.20},{supermarkt:"Aldi",prijs:1.25}] },
+  { naam: "Natuur Chips", prijzen: [{supermarkt:"AH",prijs:2.29},{supermarkt:"Jumbo",prijs:2.10},{supermarkt:"Lidl",prijs:1.99},{supermarkt:"Aldi",prijs:2.05}] },
+  { naam: "Halfvolle Melk", prijzen: [{supermarkt:"AH",prijs:1.09},{supermarkt:"Jumbo",prijs:0.95},{supermarkt:"Lidl",prijs:0.89},{supermarkt:"Aldi",prijs:0.85}] },
+  { naam: "Volkoren Brood", prijzen: [{supermarkt:"AH",prijs:1.50},{supermarkt:"Jumbo",prijs:1.40},{supermarkt:"Lidl",prijs:1.30},{supermarkt:"Aldi",prijs:1.25}] },
+  { naam: "Appels", prijzen: [{supermarkt:"AH",prijs:1.20},{supermarkt:"Jumbo",prijs:1.10},{supermarkt:"Lidl",prijs:0.99},{supermarkt:"Aldi",prijs:1.05}] },
+  { naam: "Bananen", prijzen: [{supermarkt:"AH",prijs:1.10},{supermarkt:"Jumbo",prijs:1.00},{supermarkt:"Lidl",prijs:0.95},{supermarkt:"Aldi",prijs:0.90}] },
+  { naam: "Goudreinetten", prijzen: [{supermarkt:"AH",prijs:1.35},{supermarkt:"Jumbo",prijs:1.25},{supermarkt:"Lidl",prijs:1.15},{supermarkt:"Aldi",prijs:1.20}] },
+  { naam: "Mayonaise", prijzen: [{supermarkt:"AH",prijs:1.50},{supermarkt:"Jumbo",prijs:1.40},{supermarkt:"Lidl",prijs:1.30},{supermarkt:"Aldi",prijs:1.25}] },
+  { naam: "Kaas 30+", prijzen: [{supermarkt:"AH",prijs:2.50},{supermarkt:"Jumbo",prijs:2.40},{supermarkt:"Lidl",prijs:2.30},{supermarkt:"Aldi",prijs:2.20}] },
+  { naam: "Sla", prijzen: [{supermarkt:"AH",prijs:1.20},{supermarkt:"Jumbo",prijs:1.10},{supermarkt:"Lidl",prijs:1.00},{supermarkt:"Aldi",prijs:1.05}] },
+  { naam: "Tomaten", prijzen: [{supermarkt:"AH",prijs:1.80},{supermarkt:"Jumbo",prijs:1.70},{supermarkt:"Lidl",prijs:1.60},{supermarkt:"Aldi",prijs:1.55}] },
+  { naam: "Komkommer", prijzen: [{supermarkt:"AH",prijs:0.90},{supermarkt:"Jumbo",prijs:0.85},{supermarkt:"Lidl",prijs:0.80},{supermarkt:"Aldi",prijs:0.75}] },
+  { naam: "Yoghurt naturel", prijzen: [{supermarkt:"AH",prijs:0.85},{supermarkt:"Jumbo",prijs:0.80},{supermarkt:"Lidl",prijs:0.75},{supermarkt:"Aldi",prijs:0.70}] },
+  { naam: "Rijst", prijzen: [{supermarkt:"AH",prijs:1.90},{supermarkt:"Jumbo",prijs:1.80},{supermarkt:"Lidl",prijs:1.70},{supermarkt:"Aldi",prijs:1.65}] },
+  { naam: "Pasta", prijzen: [{supermarkt:"AH",prijs:1.40},{supermarkt:"Jumbo",prijs:1.35},{supermarkt:"Lidl",prijs:1.25},{supermarkt:"Aldi",prijs:1.20}] },
+  { naam: "Suiker", prijzen: [{supermarkt:"AH",prijs:0.95},{supermarkt:"Jumbo",prijs:0.90},{supermarkt:"Lidl",prijs:0.85},{supermarkt:"Aldi",prijs:0.80}] },
+  { naam: "Zout", prijzen: [{supermarkt:"AH",prijs:0.55},{supermarkt:"Jumbo",prijs:0.50},{supermarkt:"Lidl",prijs:0.45},{supermarkt:"Aldi",prijs:0.40}] },
+  { naam: "Eieren (6 stuks)", prijzen: [{supermarkt:"AH",prijs:1.30},{supermarkt:"Jumbo",prijs:1.25},{supermarkt:"Lidl",prijs:1.20},{supermarkt:"Aldi",prijs:1.15}] },
+  { naam: "Koffie", prijzen: [{supermarkt:"AH",prijs:2.50},{supermarkt:"Jumbo",prijs:2.40},{supermarkt:"Lidl",prijs:2.30},{supermarkt:"Aldi",prijs:2.20}] },
+  { naam: "Thee", prijzen: [{supermarkt:"AH",prijs:1.90},{supermarkt:"Jumbo",prijs:1.80},{supermarkt:"Lidl",prijs:1.70},{supermarkt:"Aldi",prijs:1.65}] },
+  { naam: "Chocolade melk", prijzen: [{supermarkt:"AH",prijs:1.20},{supermarkt:"Jumbo",prijs:1.10},{supermarkt:"Lidl",prijs:1.00},{supermarkt:"Aldi",prijs:0.95}] },
+  { naam: "Boter", prijzen: [{supermarkt:"AH",prijs:1.60},{supermarkt:"Jumbo",prijs:1.55},{supermarkt:"Lidl",prijs:1.50},{supermarkt:"Aldi",prijs:1.45}] },
+  { naam: "Roomkaas", prijzen: [{supermarkt:"AH",prijs:1.30},{supermarkt:"Jumbo",prijs:1.25},{supermarkt:"Lidl",prijs:1.20},{supermarkt:"Aldi",prijs:1.15}] },
+  { naam: "Chips paprika", prijzen: [{supermarkt:"AH",prijs:2.20},{supermarkt:"Jumbo",prijs:2.10},{supermarkt:"Lidl",prijs:1.99},{supermarkt:"Aldi",prijs:2.00}] },
+  { naam: "Frisdrank cola", prijzen: [{supermarkt:"AH",prijs:1.10},{supermarkt:"Jumbo",prijs:1.05},{supermarkt:"Lidl",prijs:1.00},{supermarkt:"Aldi",prijs:0.95}] },
+  { naam: "Frisdrank sinas", prijzen: [{supermarkt:"AH",prijs:1.10},{supermarkt:"Jumbo",prijs:1.05},{supermarkt:"Lidl",prijs:1.00},{supermarkt:"Aldi",prijs:0.95}] },
+  { naam: "Varkensfilet", prijzen: [{supermarkt:"AH",prijs:3.50},{supermarkt:"Jumbo",prijs:3.40},{supermarkt:"Lidl",prijs:3.30},{supermarkt:"Aldi",prijs:3.25}] },
+  { naam: "Rundergehakt", prijzen: [{supermarkt:"AH",prijs:4.50},{supermarkt:"Jumbo",prijs:4.40},{supermarkt:"Lidl",prijs:4.30},{supermarkt:"Aldi",prijs:4.25}] },
+  { naam: "Wortelen", prijzen: [{supermarkt:"AH",prijs:0.90},{supermarkt:"Jumbo",prijs:0.85},{supermarkt:"Lidl",prijs:0.80},{supermarkt:"Aldi",prijs:0.75}] },
+  { naam: "Aardappelen", prijzen: [{supermarkt:"AH",prijs:1.20},{supermarkt:"Jumbo",prijs:1.15},{supermarkt:"Lidl",prijs:1.10},{supermarkt:"Aldi",prijs:1.05}] },
+  { naam: "Sinaasappels", prijzen: [{supermarkt:"AH",prijs:1.30},{supermarkt:"Jumbo",prijs:1.20},{supermarkt:"Lidl",prijs:1.10},{supermarkt:"Aldi",prijs:1.05}] },
+  { naam: "Paprika rood", prijzen: [{supermarkt:"AH",prijs:1.40},{supermarkt:"Jumbo",prijs:1.30},{supermarkt:"Lidl",prijs:1.20},{supermarkt:"Aldi",prijs:1.15}] },
+  { naam: "Courgette", prijzen: [{supermarkt:"AH",prijs:1.10},{supermarkt:"Jumbo",prijs:1.05},{supermarkt:"Lidl",prijs:1.00},{supermarkt:"Aldi",prijs:0.95}] },
+  { naam: "Spinazie", prijzen: [{supermarkt:"AH",prijs:1.20},{supermarkt:"Jumbo",prijs:1.10},{supermarkt:"Lidl",prijs:1.05},{supermarkt:"Aldi",prijs:1.00}] },
+  { naam: "Champignons", prijzen: [{supermarkt:"AH",prijs:1.50},{supermarkt:"Jumbo",prijs:1.40},{supermarkt:"Lidl",prijs:1.30},{supermarkt:"Aldi",prijs:1.25}] },
+  { naam: "Witte kool", prijzen: [{supermarkt:"AH",prijs:0.80},{supermarkt:"Jumbo",prijs:0.75},{supermarkt:"Lidl",prijs:0.70},{supermarkt:"Aldi",prijs:0.65}] },
+  { naam: "Blik tomaten", prijzen: [{supermarkt:"AH",prijs:0.90},{supermarkt:"Jumbo",prijs:0.85},{supermarkt:"Lidl",prijs:0.80},{supermarkt:"Aldi",prijs:0.75}] },
+  { naam: "Blik maïs", prijzen: [{supermarkt:"AH",prijs:0.85},{supermarkt:"Jumbo",prijs:0.80},{supermarkt:"Lidl",prijs:0.75},{supermarkt:"Aldi",prijs:0.70}] },
+  { naam: "Blik erwten", prijzen: [{supermarkt:"AH",prijs:0.85},{supermarkt:"Jumbo",prijs:0.80},{supermarkt:"Lidl",prijs:0.75},{supermarkt:"Aldi",prijs:0.70}] },
+  { naam: "Bloem", prijzen: [{supermarkt:"AH",prijs:0.65},{supermarkt:"Jumbo",prijs:0.60},{supermarkt:"Lidl",prijs:0.55},{supermarkt:"Aldi",prijs:0.50}] },
+  { naam: "Olie", prijzen: [{supermarkt:"AH",prijs:2.20},{supermarkt:"Jumbo",prijs:2.10},{supermarkt:"Lidl",prijs:2.00},{supermarkt:"Aldi",prijs:1.95}] },
+  { naam: "Azijn", prijzen: [{supermarkt:"AH",prijs:0.90},{supermarkt:"Jumbo",prijs:0.85},{supermarkt:"Lidl",prijs:0.80},{supermarkt:"Aldi",prijs:0.75}] },
+  { naam: "Pindakaas", prijzen: [{supermarkt:"AH",prijs:2.50},{supermarkt:"Jumbo",prijs:2.40},{supermarkt:"Lidl",prijs:2.30},{supermarkt:"Aldi",prijs:2.20}] },
+  { naam: "Jam", prijzen: [{supermarkt:"AH",prijs:1.80},{supermarkt:"Jumbo",prijs:1.70},{supermarkt:"Lidl",prijs:1.60},{supermarkt:"Aldi",prijs:1.55}] },
+  { naam: "Sinaasappelsap", prijzen: [{supermarkt:"AH",prijs:1.50},{supermarkt:"Jumbo",prijs:1.40},{supermarkt:"Lidl",prijs:1.30},{supermarkt:"Aldi",prijs:1.25}] },
+  { naam: "Water", prijzen: [{supermarkt:"AH",prijs:0.50},{supermarkt:"Jumbo",prijs:0.45},{supermarkt:"Lidl",prijs:0.40},{supermarkt:"Aldi",prijs:0.35}] },
+  { naam: "Koffiemelk", prijzen: [{supermarkt:"AH",prijs:0.90},{supermarkt:"Jumbo",prijs:0.85},{supermarkt:"Lidl",prijs:0.80},{supermarkt:"Aldi",prijs:0.75}] },
+  { naam: "Sla salade mix", prijzen: [{supermarkt:"AH",prijs:1.20},{supermarkt:"Jumbo",prijs:1.10},{supermarkt:"Lidl",prijs:1.00},{supermarkt:"Aldi",prijs:1.05}] },
+  { naam: "Mayo light", prijzen: [{supermarkt:"AH",prijs:1.50},{supermarkt:"Jumbo",prijs:1.40},{supermarkt:"Lidl",prijs:1.30},{supermarkt:"Aldi",prijs:1.25}] },
+  { naam: "Groene thee", prijzen: [{supermarkt:"AH",prijs:1.80},{supermarkt:"Jumbo",prijs:1.75},{supermarkt:"Lidl",prijs:1.70},{supermarkt:"Aldi",prijs:1.65}] },
+  { naam: "Vleeswaren kip", prijzen: [{supermarkt:"AH",prijs:2.50},{supermarkt:"Jumbo",prijs:2.40},{supermarkt:"Lidl",prijs:2.30},{supermarkt:"Aldi",prijs:2.20}] },
+  { naam: "Vleeswaren ham", prijzen: [{supermarkt:"AH",prijs:2.20},{supermarkt:"Jumbo",prijs:2.10},{supermarkt:"Lidl",prijs:2.00},{supermarkt:"Aldi",prijs:1.95}] },
+  { naam: "Kipfilet", prijzen: [{supermarkt:"AH",prijs:3.50},{supermarkt:"Jumbo",prijs:3.40},{supermarkt:"Lidl",prijs:3.30},{supermarkt:"Aldi",prijs:3.25}] },
+  { naam: "Gehaktballen", prijzen: [{supermarkt:"AH",prijs:4.00},{supermarkt:"Jumbo",prijs:3.90},{supermarkt:"Lidl",prijs:3.80},{supermarkt:"Aldi",prijs:3.75}] },
+  { naam: "Wijn rood", prijzen: [{supermarkt:"AH",prijs:5.00},{supermarkt:"Jumbo",prijs:4.90},{supermarkt:"Lidl",prijs:4.80},{supermarkt:"Aldi",prijs:4.75}] },
+  { naam: "Wijn wit", prijzen: [{supermarkt:"AH",prijs:5.00},{supermarkt:"Jumbo",prijs:4.90},{supermarkt:"Lidl",prijs:4.80},{supermarkt:"Aldi",prijs:4.75}] },
+  { naam: "Bier", prijzen: [{supermarkt:"AH",prijs:1.00},{supermarkt:"Jumbo",prijs:0.95},{supermarkt:"Lidl",prijs:0.90},{supermarkt:"Aldi",prijs:0.85}] },
+  { naam: "Sinaasappelschijfjes", prijzen: [{supermarkt:"AH",prijs:1.20},{supermarkt:"Jumbo",prijs:1.10},{supermarkt:"Lidl",prijs:1.00},{supermarkt:"Aldi",prijs:1.05}] },
+  { naam: "Kropsla", prijzen: [{supermarkt:"AH",prijs:1.00},{supermarkt:"Jumbo",prijs:0.95},{supermarkt:"Lidl",prijs:0.90},{supermarkt:"Aldi",prijs:0.85}] },
+  { naam: "Meloen", prijzen: [{supermarkt:"AH",prijs:1.50},{supermarkt:"Jumbo",prijs:1.40},{supermarkt:"Lidl",prijs:1.30},{supermarkt:"Aldi",prijs:1.25}] },
+  { naam: "Peer", prijzen: [{supermarkt:"AH",prijs:1.10},{supermarkt:"Jumbo",prijs:1.05},{supermarkt:"Lidl",prijs:1.00},{supermarkt:"Aldi",prijs:0.95}] },
+  { naam: "Kipdrumsticks", prijzen: [{supermarkt:"AH",prijs:3.00},{supermarkt:"Jumbo",prijs:2.90},{supermarkt:"Lidl",prijs:2.80},{supermarkt:"Aldi",prijs:2.75}] },
+  { naam: "Frambozen", prijzen: [{supermarkt:"AH",prijs:2.00},{supermarkt:"Jumbo",prijs:1.90},{supermarkt:"Lidl",prijs:1.80},{supermarkt:"Aldi",prijs:1.75}] },
+  { naam: "Aardbeien", prijzen: [{supermarkt:"AH",prijs:2.20},{supermarkt:"Jumbo",prijs:2.10},{supermarkt:"Lidl",prijs:2.00},{supermarkt:"Aldi",prijs:1.95}] },
+  { naam: "Kaas 48+", prijzen: [{supermarkt:"AH",prijs:2.80},{supermarkt:"Jumbo",prijs:2.70},{supermarkt:"Lidl",prijs:2.60},{supermarkt:"Aldi",prijs:2.55}] },
+  { naam: "Zilvervliesrijst", prijzen: [{supermarkt:"AH",prijs:2.10},{supermarkt:"Jumbo",prijs:2.00},{supermarkt:"Lidl",prijs:1.90},{supermarkt:"Aldi",prijs:1.85}] },
+  { naam: "Ontbijtkoek", prijzen: [{supermarkt:"AH",prijs:1.40},{supermarkt:"Jumbo",prijs:1.35},{supermarkt:"Lidl",prijs:1.25},{supermarkt:"Aldi",prijs:1.20}] }
+];
+
+const tbody = document.getElementById("productTableBody");
+const searchInput = document.getElementById("search");
+
+function toonProducten(filter = "") {
+  tbody.innerHTML = "";
+
+  const filtered = productCategorieen.filter(p => p.naam.toLowerCase().includes(filter.toLowerCase()));
+
+  filtered.forEach(product => {
+    // Vind goedkoopste prijs en supermarkt
+    let goedkoopste = product.prijzen.reduce((min, curr) => curr.prijs < min.prijs ? curr : min, product.prijzen[0]);
+
+    const tr = document.createElement("tr");
+
+    const tdNaam = document.createElement("td");
+    tdNaam.textContent = product.naam;
+    tr.appendChild(tdNaam);
+
+    const tdSupermarkt = document.createElement("td");
+    tdSupermarkt.textContent = goedkoopste.supermarkt;
+    tdSupermarkt.classList.add("goedkoopste");
+    tr.appendChild(tdSupermarkt);
+
+    const tdPrijs = document.createElement("td");
+    tdPrijs.textContent = goedkoopste.prijs.toFixed(2);
+    tr.appendChild(tdPrijs);
+
+    tbody.appendChild(tr);
+  });
+}
+
+searchInput.addEventListener("input", () => {
+  toonProducten(searchInput.value);
+});
+
+// Laat alle producten zien bij het openen
+toonProducten();
+
+</script>
+
+</body>
+</html>
